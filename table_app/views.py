@@ -34,6 +34,27 @@ class CategoryView(View):
         category = form.save()
         return JsonResponse({'id': category.pk, 'name': category.name}, status=201)
 
+    def put(self, request, pk):
+        new_data = loads(request.body)
+        try:
+            category = Category.objects.get(pk=pk)
+        except Category.DoesNotExist:
+            return HttpResponseNotFound('Category not found')
+
+        form = CategoryForm(new_data, instance=category)
+        if not form.is_valid():
+            return HttpResponseBadRequest(form.errors.as_json())
+        category = form.save()
+        return JsonResponse({'id': category.pk, 'name': category.name})
+
+    # def delete(self, request, pk):
+    #     try:
+    #         category = Category.objects.get(pk=pk)
+    #     except Category.DoesNotExist:
+    #         return HttpResponseNotFound('Category not found')
+    #     category.delete()
+    #     return JsonResponse({'status': 'ok'})
+
 
 @method_decorator(csrf_exempt, 'dispatch')
 class QuoteView(View):
@@ -74,6 +95,20 @@ class QuoteView(View):
         quote = form.save()
         return JsonResponse({'id': quote.pk, 'text': quote.text}, status=201)
 
+
+    def put(self, request, pk):
+        new_data = loads(request.body)
+        try:
+            quote = Quote.objects.get(pk=pk)
+        except Quote.DoesNotExist:
+            return HttpResponseNotFound('Quote not found')
+
+        form = QuoteForm(new_data, instance=quote)
+        if not form.is_valid():
+            return HttpResponseBadRequest(form.errors.as_json())
+        quote = form.save()
+        return JsonResponse({'id': quote.pk, 'text': quote.text})
+        
 
 class RandomQuoteView(View):
     def get(self, request):
