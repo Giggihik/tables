@@ -47,6 +47,18 @@ class CategoryView(View):
         category = form.save()
         return JsonResponse({'id': category.pk, 'name': category.name})
 
+    def patch(self, request, pk):
+        new_data = loads(request.body)
+        try:
+            category = Category.objects.get(pk=pk)
+        except Category.DoesNotExist:
+            return HttpResponseNotFound('Category not found')
+
+        if 'name' in new_data:
+            category.name = new_data['name']
+        category.save()
+        return JsonResponse({'id': category.pk, 'name': category.name})
+
     # def delete(self, request, pk):
     #     try:
     #         category = Category.objects.get(pk=pk)
@@ -108,7 +120,24 @@ class QuoteView(View):
             return HttpResponseBadRequest(form.errors.as_json())
         quote = form.save()
         return JsonResponse({'id': quote.pk, 'text': quote.text})
-        
+
+    def patch(self, request, pk):
+        new_data = loads(request.body)
+        try:
+            quote = Quote.objects.get(pk=pk)
+        except Quote.DoesNotExist:
+            return HttpResponseNotFound('Quote not found')
+
+        if 'text' in new_data:
+            quote.text = new_data['text']
+        if 'category' in new_data:
+            quote.category_id = new_data['category']
+        quote.save()
+        return JsonResponse({
+            'id': quote.pk,
+            'text': quote.text,
+            'category': quote.category_id,
+        })
 
 class RandomQuoteView(View):
     def get(self, request):
