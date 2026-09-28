@@ -59,13 +59,13 @@ class CategoryView(View):
         category.save()
         return JsonResponse({'id': category.pk, 'name': category.name})
 
-    # def delete(self, request, pk):
-    #     try:
-    #         category = Category.objects.get(pk=pk)
-    #     except Category.DoesNotExist:
-    #         return HttpResponseNotFound('Category not found')
-    #     category.delete()
-    #     return JsonResponse({'status': 'ok'})
+    def delete(self, request, pk):
+        try:
+            category = Category.objects.get(pk=pk)
+        except Category.DoesNotExist:
+            return HttpResponseNotFound('Category not found')
+        category.delete()
+        return JsonResponse({'status': 'ok'})
 
 
 @method_decorator(csrf_exempt, 'dispatch')
@@ -138,6 +138,14 @@ class QuoteView(View):
             'text': quote.text,
             'category': quote.category_id,
         })
+
+    def delete(self, request, pk):
+        try:
+            quote = Quote.objects.get(pk=pk)
+        except Quote.DoesNotExist:
+            return HttpResponseNotFound('Quote not found')
+        quote.delete()
+        return JsonResponse({'status': 'ok'})
 
 class RandomQuoteView(View):
     def get(self, request):
